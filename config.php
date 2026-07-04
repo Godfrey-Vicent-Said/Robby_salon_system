@@ -3,20 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. DATABASE CONNECTION (Inajaribu SQLite, isipopatikana inadanganya mfumo)
-try {
-    if (file_exists(__DIR__ . "/salon.db")) {
-        $pdo = new PDO("sqlite:" . __DIR__ . "/salon.db");
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } else {
-        // Kama faili halipo AWS, tunatengeneza object hewa ili kodi isife
-        $pdo = new stdClass();
-    }
-} catch (Exception $e) {
-    $pdo = new stdClass(); 
-}
+// Tumeondoa database connection kabisa ili isilete error kule AWS!
+$pdo = null; 
 
-// 2. SECURITY & KEY MANAGEMENT (AES-256-CBC)
+// Ma-setting ya ulinzi na encryption (AES-256-CBC)
 define('ENCRYPTION_KEY', 'CBE_bit2_secret_key_2026!!@@');
 define('ENCRYPTION_METHOD', 'AES-256-CBC');
 define('SECRET_IV', '1234567890123456');
