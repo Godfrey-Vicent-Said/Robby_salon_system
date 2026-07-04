@@ -3,9 +3,36 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Tumezima kabisa connection hapa ili kuzuia crash yoyote ya database AWS
-$pdo = null; 
+// Kupata path sahihi ya faili la SQLite kule AWS
+$db_path = __DIR__ . '/salon.db';
 
+try {
+    $pdo = new PDO("sqlite:" . $db_path);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Kutengeneza tables moja kwa moja zisilete crash
+    $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+    )");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        phone TEXT,
+        service TEXT
+    )");
+
+    // Kuweka user 'Robby' moja kwa moja
+    $stmt = $pdo->prepare("INSERT OR IGNORE INTO users (username, password) VALUES ('Robby', '12345')");
+    $stmt->execute();
+
+} catch (Exception $e) {
+    $pdo = null;
+}
+
+// Ulinzi wa Data (AES-256-CBC) kama maelekezo ya kozi yanavyotaka[cite: 1]
 define('ENCRYPTION_KEY', 'CBE_bit2_secret_key_2026!!@@');
 define('ENCRYPTION_METHOD', 'AES-256-CBC');
 define('SECRET_IV', '1234567890123456');
