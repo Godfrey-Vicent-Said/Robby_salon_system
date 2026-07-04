@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
 require_once 'config.php';
 require_once 'classes.php';
 
@@ -7,22 +9,15 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-$message = '';
-
+$msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $service = trim($_POST['service'] ?? '');
+    $name = $_POST['name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $service = $_POST['service'] ?? '';
 
-    if (!empty($name) && !empty($phone) && !empty($service)) {
-        $customerObj = new Customer($pdo);
-        if ($customerObj->addCustomer($name, $phone, $service)) {
-            $message = 'Mteja ameongezwa kwa usalama (Data Imekuwa Encrypted)!';
-        } else {
-            $message = 'Imeshindikana kuongeza mteja.';
-        }
-    } else {
-        $message = 'Tafadhali jaza nafasi zote!';
+    $customerObj = new Customer($pdo);
+    if ($customerObj->addCustomer($name, $phone, $service)) {
+        $msg = 'Mteja alihifadhiwa kwa encryption kwa ufanisi!';[cite: 1]
     }
 }
 ?>
@@ -30,41 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ongeza Mteja - Salon Smart System</title>
+    <title>Ongeza Mteja</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .nav { margin-bottom: 20px; }
-        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #28a745; border: none; color: white; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .msg { background: #e2f0d9; color: #385723; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 20px; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f6f9; }
+        .form-box { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px; background: green; color: white; border: none; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="nav">
-        <a href="index.php">Dashboard</a>
-        <a href="logout.php">Log Out</a>
-    </div>
-    
-    <h2>Ongeza Mteja Mpya</h2>
-    <?php if (!empty($message)): ?>
-        <div class="msg"><?php echo htmlspecialchars($message); ?></div>
-    <?php endif; ?>
-    
-    <form action="add_customer.php" method="POST">
-        <label>Jina la Mteja</label>
-        <input type="text" name="name" required>
-        
-        <label>Namba ya Simu</label>
-        <input type="text" name="phone" required>
-        
-        <label>Huduma (Mfano: Kusuka, Kunyoa)</label>
-        <input type="text" name="service" required>
-        
-        <button type="submit">Hifadhi Mteja</button>
+<div class="form-box">
+    <a href="index.php">Rudi Nyumbani</a>
+    <h2>Sajili Mteja</h2>
+    <?php if($msg): ?><div style="color: green;"><?php echo $msg; ?></div><?php endif; ?>
+    <form method="POST">
+        <label>Jina</label><input type="text" name="name" required>
+        <label>Simu</label><input type="text" name="phone" required>
+        <label>Huduma</label><input type="text" name="service" required>
+        <button type="submit">Hifadhi</button>
     </form>
 </div>
 </body>
