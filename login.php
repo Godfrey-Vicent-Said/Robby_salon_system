@@ -3,113 +3,117 @@ require_once 'config.php';
 
 $error = '';
 
-if (isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
-    if (empty($username) || empty($password)) {
-        $error = "Tafadhali jaza nafasi zote!";
+    // Mbinu ya kijanja ya ku-bypass database na kuruhusu Robby mtandaoni AWS
+    if ($username === 'Robby' && $password === '12345') {
+        $_SESSION['user'] = $username;
+        $_SESSION['role'] = 'admin';
+        
+        // Mpeleke mtumiaji moja kwa moja kwenye dashboard baada ya kufanikiwa
+        header('Location: dashboard.php'); 
+        exit;
     } else {
-        $sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$username, $password]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: index.php");
-            exit;
-        } else {
-            $error = "Username au Password sio sahihi!";
-        }
+        $error = 'Mzee wangu, Username au Password sio sahihi!';
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salon Smart System - Login</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* Picha halisi ya saluni ya kishua (Real-world interior) */
-            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=1200&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background: #f4f6f9; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
             margin: 0; 
         }
-        .login-container { 
-            background: rgba(255, 255, 255, 0.95); 
+        .login-box { 
+            background: white; 
             padding: 40px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3); 
-            width: 100%; 
-            max-width: 360px; 
-            backdrop-filter: blur(5px);
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            width: 100%;
+            max-width: 350px; 
         }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 25px; font-weight: 600; letter-spacing: 1px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #34495e; font-weight: 500; }
+        h2 { 
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 25px; 
+            font-weight: 600;
+        }
+        .error { 
+            background: #f8d7da;
+            color: #721c24; 
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center; 
+            margin-bottom: 20px; 
+            font-size: 14px; 
+            border: 1px solid #f5c6cb;
+        }
+        label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
         input[type="text"], input[type="password"] { 
             width: 100%; 
             padding: 12px; 
-            border: 1px solid #cbd5e1; 
+            margin: 8px 0 20px 0; 
+            border: 1px solid #ccc; 
             border-radius: 6px; 
             box-sizing: border-box; 
             font-size: 14px;
         }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
         button { 
             width: 100%; 
             padding: 12px; 
-            background: #2c3e50; 
-            border: 0; 
-            border-radius: 6px; 
+            background: #007bff; 
+            border: none; 
             color: white; 
+            border-radius: 6px; 
             font-size: 16px; 
             font-weight: bold;
             cursor: pointer; 
+            transition: background 0.2s;
         }
-        button:hover { background: #1a252f; }
-        .error { 
-            background: #f8d7da; 
-            color: #721c24; 
-            padding: 10px; 
-            border-radius: 6px; 
-            text-align: center; 
-            margin-bottom: 20px; 
-            font-size: 14px; 
+        button:hover { 
+            background: #0056b3; 
         }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>SALON SYSTEM</h2>
+
+<div class="login-box">
+    <h2>Salon Smart System</h2>
+    
     <?php if (!empty($error)): ?>
-        <div class="error"><?php echo $error; ?></div>
+        <div class="error"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
+    
     <form action="login.php" method="POST">
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" name="username" placeholder="Ingiza Username" required>
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Ingiza Password" required>
-        </div>
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Weka Robby" required>
+        
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Weka 12345" required>
+        
         <button type="submit">Ingia Kwenye Mfumo</button>
     </form>
 </div>
+
 </body>
 </html>
