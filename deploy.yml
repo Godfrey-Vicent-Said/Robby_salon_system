@@ -1,0 +1,25 @@
+name: Deploy PHP Application to AWS
+
+on:
+  push:
+    branches:
+      - main # Au badilisha kuwa master kama branch yako kuu inaitwa hivyo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1 # Region yako ya AWS tuliyoiona kule console
+
+    - name: Deploy to AWS
+      run: |
+        echo "Mtambo wa usalama umekubali! Tayari kuanza kusukuma kodi..."
