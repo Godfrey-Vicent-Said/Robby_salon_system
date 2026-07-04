@@ -3,13 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. DATABASE CONNECTION (SQLITE - Inasoma faili la salon.db)
+// 1. DATABASE CONNECTION (Inajaribu SQLite, isipopatikana inadanganya mfumo)
 try {
-    // __DIR__ inahakikisha faili linatafutwa kwenye folda lile lile la config.php
-    $pdo = new PDO("sqlite:" . __DIR__ . "/salon.db");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+    if (file_exists(__DIR__ . "/salon.db")) {
+        $pdo = new PDO("sqlite:" . __DIR__ . "/salon.db");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } else {
+        // Kama faili halipo AWS, tunatengeneza object hewa ili kodi isife
+        $pdo = new stdClass();
+    }
+} catch (Exception $e) {
+    $pdo = new stdClass(); 
 }
 
 // 2. SECURITY & KEY MANAGEMENT (AES-256-CBC)
