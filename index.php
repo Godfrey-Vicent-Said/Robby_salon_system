@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
 require_once 'config.php';
 require_once 'classes.php';
 
@@ -14,55 +16,32 @@ $customers = $customerObj->getAllCustomers();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salon Smart System - Home</title>
+    <title>Dashboard - Salon Smart System</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .nav { margin-bottom: 20px; }
-        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
-        .logout { float: right; color: #dc3545 !important; }
+        body { font-family: sans-serif; background: #f4f6f9; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f2f2f2; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="nav">
-        <a href="index.php">Nyumbani (Dashboard)</a>
-        <a href="add_customer.php">Ongeza Mteja</a>
-        <a href="logout.php" class="logout">Log Out</a>
-    </div>
-    
-    <h1>Salon Smart System</h1>
-    <p>Karibu, <strong><?php echo htmlspecialchars($_SESSION['user']); ?></strong></p>
+    <div style="float: right;"><a href="logout.php" style="color: red;">Log Out</a></div>
+    <h2>Dashboard</h2>
+    <p>Karibu, <?php echo htmlspecialchars($_SESSION['user']); ?> | <a href="add_customer.php">Ongeza Mteja Mpya</a></p>
     <hr>
-    
-    <h3>Orodha ya Wateja (Data Zilizotolewa na Kufanyiwa Decryption)</h3>
+    <h3>Orodha ya Wateja</h3>
     <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Jina la Mteja</th>
-                <th>Namba ya Simu</th>
-                <th>Huduma</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($customers)): ?>
-                <tr><td colspan="4" style="text-align:center;">Hakuna wateja waliorekodiwa bado.</td></tr>
-            <?php else: ?>
-                <?php foreach ($customers as $c): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($c['id']); ?></td>
-                        <td><?php echo htmlspecialchars($c['name']); ?></td>
-                        <td><?php echo htmlspecialchars($c['phone']); ?></td>
-                        <td><?php echo htmlspecialchars($c['service']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
+        <tr><th>ID</th><th>Jina</th><th>Simu</th><th>Huduma</th></tr>
+        <?php foreach ($customers as $c): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($c['id']); ?></td>
+            <td><?php echo htmlspecialchars($c['name']); ?></td>
+            <td><?php echo htmlspecialchars($c['phone']); ?></td>
+            <td><?php echo htmlspecialchars($c['service']); ?></td>
+        </tr>
+        <?php endforeach; ?>
     </table>
 </div>
 </body>
