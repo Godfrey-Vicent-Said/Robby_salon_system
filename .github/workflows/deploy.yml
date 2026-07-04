@@ -3,7 +3,7 @@ name: Deploy PHP Application to AWS
 on:
   push:
     branches:
-      - main # Au badilisha kuwa master kama branch yako kuu inaitwa hivyo
+      - main
 
 jobs:
   deploy:
@@ -18,8 +18,8 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1 # Region yako ya AWS tuliyoiona kule console
+        aws-region: eu-north-1
 
-    - name: Deploy to AWS
+    - name: Deploy to AWS S3
       run: |
-        echo "Mtambo wa usalama umekubali! Tayari kuanza kusukuma kodi..."
+        aws s3 sync . s3://elasticbeanstalk-eu-north-1-248369845311 --exclude ".git*" --exclude ".github*"
